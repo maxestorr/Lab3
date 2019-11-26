@@ -7,6 +7,5 @@ function [classFeatures, labels, regFeatures, targets] = get_data()
     regY = table2array(readtable('predy_for_regression.csv'));
     targets = table2array(readtable('angle.csv'));
     regFeatures = [regX,regY];
-    
 end
 
