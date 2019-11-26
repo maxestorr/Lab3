@@ -1,0 +1,7 @@
+# Ignore all files
+*
+
+# Accept these files
+!.gitignore
+!README.md
+!*.m
