@@ -8,4 +8,3 @@ function [classFeatures, labels, regFeatures, targets] = getData()
     targets = table2array(readtable('angle.csv'));
     regFeatures = [regX,regY];
 end
-
