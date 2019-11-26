@@ -1,4 +1,4 @@
-function [classFeatures, labels, regFeatures, targets] = get_data()
+function [classFeatures, labels, regFeatures, targets] = getData()
     classX = table2array(readtable('predx_for_classification.csv'));
     classY = table2array(readtable('predy_for_classification.csv'));
     labels = table2array(readtable('label.csv'));
