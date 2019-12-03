@@ -1,2 +1,4 @@
-fit = predict(classMdl,classData((74611:82906),:));
-accuracy = 100*(1-sum((fit - labels((74611:82906),1)).^2)/(8295));
+function accuracy = classEval[classMdl,testData,testLabels]
+  fit = predict(classMdl,testData));
+  accuracy = 100*(1-sum((fit - testLabels).^2)/(length(testLabels));
+end
