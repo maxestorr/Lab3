@@ -1,41 +1,24 @@
 function [Alpha] = innerFoldHyperParameterAdjust(predictions, actual, learning_rate)
     iter = 1;
-    Maxiter = 10;
+    maxIterations = 10;
     Theta = 3;
-    Tol = 10;
-    Alpha = learning_rate
+    Alpha = learning_rate;
 
-Bestfunc = zeros(Maxiter, 1);
-Err = zeros(Maxiter,1);
-FunErr = zeros(Maxiter,1);
-DummyVar = Theta;
-DummyVarf = Cost(predictions, actual,Theta);
+bestParam = zeros(maxIterations, 1);
 
-for iter = 1:Maxiter
+for iter = 1:maxIterations
       Theta = Theta - Alpha*(Der_Cost(predictions, actual, Theta))';
-      Bestfunc(iter)= Cost(predictions, actual, Theta);
-      Err(iter) = norm(Theta-DummyVar);
-      FunErr(iter) = abs((Bestfunc(iter)-DummyVarf)/Bestfunc(iter));
-      FunTol = 3;
-             
-    if (Err(iter)< Tol)
-        if (FunErr(iter)< FunTol)
-        fprintf('\n -----CHANGE IN THETA & COST FUNCTION LESS THAN SPECIFIED TOLERANCE-----\n');
-        r = (1-(-1)).*rand(1,1) +(-1);
-        Alpha = abs(Alpha + r);
-        break;
-        end
-    end
+      bestParam(iter)= Cost(predictions, actual, Theta);
+      %get err
     
-    if (iter == Maxiter)
-        fprintf('\n -----MAXIMUM NUMBER OF ITERATIONS REACHED-----\n');
+    if (iter == maxIterations)
         break;
     end
 end
 end
 
 function [output] = Cost(pred, actual, guess)
-    output = ((1/(2*20))*sum((pred*guess'-actual).^2));
+    output = ((1/(length(pred)))*sum((pred*guess'-actual).^2));
 
 end
 
