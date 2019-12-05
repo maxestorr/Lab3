@@ -18,11 +18,11 @@ end
 end
 
 function [output] = Cost(pred, actual, guess)
-    output = ((1/(length(pred)))*sum((pred*guess'-actual).^2));
+    output = ((1/2 *(length(pred)))*sum((pred*guess'-actual).^2));
 
 end
 
 function [output] = Der_Cost(pred, actual, guess)
-    output =(1/(2 * length(pred))*(pred'*(pred*(guess)'-actual)));
+    output =(1/(length(pred))*(pred'*(pred*(guess)'-actual)));
 
 end
