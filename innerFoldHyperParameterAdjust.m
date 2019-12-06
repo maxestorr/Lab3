@@ -1,4 +1,4 @@
-function [Alpha] = innerFoldHyperParameterAdjust(test_features, test_labels, learning_rate)
+function [accuracyArray] = innerFoldHyperParameterAdjust(test_features, test_labels, modelSelection)
     k_sliceNum = 10;
     [new_features, new_labels] = kFold(k_sliceNum, test_features, test_labels);
     
@@ -7,32 +7,35 @@ function [Alpha] = innerFoldHyperParameterAdjust(test_features, test_labels, lea
     label_test = new_labels(:, i);
     clearvars feature_train label_train
     
-    for j = 1 : k_sliceNum
-        if i ~= j
-            if exist('feature_train','var') == 1
-                feature_train = cat(1, feature_train, new_features(:,:, j));
-            else
-                feature_train = new_features(:,:, j);
-            end
-            if exist('label_train','var') == 1
-                label_train = cat(1, label_train, new_labels(:, j));
-            else
-                label_train = new_labels(:, j);
+    %accuracyArray = zeros(k_sliceNum, 1);
+    if modelSelection == 1
+        params = [1,  5, 10, 100, Inf];
+    end
+    
+    for n = 1 : length(params)
+        for j = 1 : k_sliceNum
+            if i ~= j
+                if exist('feature_train','var') == 1
+                    feature_train = cat(1, feature_train, new_features(:,:, j));
+                else
+                    feature_train = new_features(:,:, j);
+                end
+                if exist('label_train','var') == 1
+                    label_train = cat(1, label_train, new_labels(:, j));
+                else
+                    label_train = new_labels(:, j);
+                end
             end
         end
+
+        if modelSelection == 1
+            linearReg = linearRegression(feature_train, label_train, 1, params(n), 1);
+            predictions = predict(linearReg, feature_test);
+
+
+            accuracyArray(i) = sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum);
+        end
     end
-        
-    linearReg = linearRegression(regData, targets, alpha);
-    predictions = predict(linearReg, feature_test);
-    alpha = innerFoldHyperParameterAdjust(feature_test, label_test, alpha);
-    
-    accuracyArray(i) = sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum);
-
-    %total_fMeasureScore = total_fMeasureScore + fMeasureScore;
-    %fscoreArray(i) = fMeasureScore;
-    %accuracyArray(i) = sum(predictions == label_test) / (size(features, 1) / k_sliceNum);
-    
-
     end
 end
 

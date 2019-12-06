@@ -4,8 +4,8 @@ clc
 [classData, labels, regData, targets] = getData();
 disp("Data loaded");
 
-regData = regData(1:100, :);
-targets = targets(1:100, :);
+regData = regData(1:1000, :);
+targets = targets(1:1000, :);
 k_sliceNum = 10;
 [new_features, new_labels] = kFold(k_sliceNum, regData, targets);
 
@@ -13,7 +13,8 @@ accuracyArray = zeros(k_sliceNum, 1);
 fscoreArray = zeros(k_sliceNum, 1);
 total_fMeasureScore = 0;
 
-alpha = 0.1
+epsilonValue = 0.1;
+
 for i = 1 : k_sliceNum 
     feature_test = new_features(:,:, i);
     label_test = new_labels(:, i);
@@ -32,10 +33,9 @@ for i = 1 : k_sliceNum
             end
         end
     end
-        
-    linearReg = linearRegression(regData, targets, alpha);
+    linearReg = linearRegression(feature_train, label_train, 1, epsilonValue, 1);
     predictions = predict(linearReg, feature_test);
-    alpha = innerFoldHyperParameterAdjust(feature_test, label_test, alpha);
+    alpha = innerFoldHyperParameterAdjust(feature_test, label_test, 1);
     
 
 
