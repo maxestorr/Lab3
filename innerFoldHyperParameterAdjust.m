@@ -37,13 +37,26 @@ function [accuracyArray] = innerFoldHyperParameterAdjust(test_features, test_lab
         
         %depending on model selection, paramter is loaded in
         if modelSelection == 1
-            linearReg = linearRegression(feature_train, label_train, 1, params(n), 0);
+            linearReg = linearRegression(feature_train, label_train, 1, params(n), 1);
             predictions = predict(linearReg, feature_test);
-            accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
+            %L2 error used here, gimme ideas bois
+            accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test) 
         end
         
         if modelSelection == 2
             linearReg = linearClassification(feature_train, label_train, params(n));
+            predictions = predict(linearReg, feature_test);
+            accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
+        end
+        
+        if modelSelection == 3
+            linearReg = polynomialRegression(feature_train, label_train, 1, params(n), 2);
+            predictions = predict(linearReg, feature_test);
+            accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test) 
+        end
+        
+         if modelSelection == 4
+            linearReg = polynomialClassification(feature_train, label_train, params(n));
             predictions = predict(linearReg, feature_test);
             accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
         end
