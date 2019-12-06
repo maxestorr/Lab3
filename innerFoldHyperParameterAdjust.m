@@ -6,7 +6,8 @@ function [accuracyArray] = innerFoldHyperParameterAdjust(test_features, test_lab
     feature_test = new_features(:,:, i);
     label_test = new_labels(:, i);
     clearvars feature_train label_train
-    
+     
+    %params hold values that are loaded in
     %1 is linear regression
     if modelSelection == 1
         params = [1,  5, 10, 100, Inf];
@@ -17,6 +18,7 @@ function [accuracyArray] = innerFoldHyperParameterAdjust(test_features, test_lab
         params = [1,  5, 10, 100, Inf];
     end
     
+    %k fold is done here with test data from main
     for n = 1 : length(params)
         for j = 1 : k_sliceNum
             if i ~= j
@@ -32,7 +34,8 @@ function [accuracyArray] = innerFoldHyperParameterAdjust(test_features, test_lab
                 end
             end
         end
-
+        
+        %depending on model selection, paramter is loaded in
         if modelSelection == 1
             linearReg = linearRegression(feature_train, label_train, 1, params(n), 0);
             predictions = predict(linearReg, feature_test);
