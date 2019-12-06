@@ -1,14 +1,19 @@
 function [accuracyArray] = innerFoldHyperParameterAdjust(test_features, test_labels, modelSelection)
     k_sliceNum = 10;
     [new_features, new_labels] = kFold(k_sliceNum, test_features, test_labels);
-    
+    accuracyArray = []
     for i = 1 : k_sliceNum 
     feature_test = new_features(:,:, i);
     label_test = new_labels(:, i);
     clearvars feature_train label_train
     
-    %accuracyArray = zeros(k_sliceNum, 1);
+    %1 is linear regression
     if modelSelection == 1
+        params = [1,  5, 10, 100, Inf];
+    end
+    
+    %2 is linear classification
+    if modelSelection == 2
         params = [1,  5, 10, 100, Inf];
     end
     
@@ -29,11 +34,15 @@ function [accuracyArray] = innerFoldHyperParameterAdjust(test_features, test_lab
         end
 
         if modelSelection == 1
-            linearReg = linearRegression(feature_train, label_train, 1, params(n), 1);
+            linearReg = linearRegression(feature_train, label_train, 1, params(n), 0);
             predictions = predict(linearReg, feature_test);
-
-
-            accuracyArray(i) = sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum);
+            accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
+        end
+        
+        if modelSelection == 2
+            linearReg = linearClassification(feature_train, label_train, params(n));
+            predictions = predict(linearReg, feature_test);
+            accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
         end
     end
     end
