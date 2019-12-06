@@ -35,7 +35,7 @@ for i = 1 : k_sliceNum
         
     linearReg = linearRegression(regData, targets, alpha);
     predictions = predict(linearReg, feature_test);
-    alpha = innerFoldHyperParameterAdjust(predictions, label_test, alpha);
+    alpha = innerFoldHyperParameterAdjust(feature_test, label_test, alpha);
     
 
 
