@@ -13,63 +13,86 @@ function [bestParam] = innerFoldHyperParameterAdjust(test_features, test_labels,
         otherwise
             warning('modelSelection param not properly assigned. Pls check.')
     end
-for n = 1 : length(params) 
     
-    for i = 1 : k_sliceNum 
-    feature_test = new_features(:,:, i);
-    label_test = new_labels(:, i);
-    clearvars feature_train label_train
-    for j = 1 : k_sliceNum
-        if i ~= j
-            if exist('feature_train','var') == 1
-                feature_train = cat(1, feature_train, new_features(:,:, j));
-            else
-                feature_train = new_features(:,:, j);
-            end
-            if exist('label_train','var') == 1
-                label_train = cat(1, label_train, new_labels(:, j));
-            else
-                label_train = new_labels(:, j);
+    % k-fold
+    for i = 1 : k_sliceNum
+        feature_test = new_features(:,:, i);
+        label_test = new_labels(:, i);
+        clearvars feature_train label_train
+        for j = 1 : k_sliceNum
+            if i ~= j
+                if exist('feature_train','var') == 1
+                    feature_train = cat(1, feature_train, new_features(:,:, j));
+                else
+                    feature_train = new_features(:,:, j);
+                end
+                if exist('label_train','var') == 1
+                    label_train = cat(1, label_train, new_labels(:, j));
+                else
+                    label_train = new_labels(:, j);
+                end
             end
         end
-    end
-
+    
     %depending on model selection, paramter is loaded in
     switch(modelSelection)
         case 1
-            linearReg = linearRegression(feature_train, label_train, 1, params(n), 1);
-            predictions = predict(linearReg, feature_test);
-            %L2 error used here, gimme ideas bois
-            accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+            for constraint = 1:100:10
+                for epsilon = 1:100:10
+                    linearReg = linearRegression(feature_train, label_train, epsilon, constraint, 1);
+                    predictions = predict(linearReg, feature_test);
+                    %L2 error used here, gimme ideas bois
+                    accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+                end
+            end
         case 2
-            linearClass = linearClassification(feature_train, label_train, params(n));
-            predictions = predict(linearClass, feature_test);
-            accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
+            for boxConstraint = 1:100:10                
+                linearClass = linearClassification(feature_train, label_train, boxConstraint);
+                predictions = predict(linearClass, feature_test);
+                accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
+            end
         case 3
-            polyReg = polynomialRegression(feature_train, label_train, 1, params(n), 2);
-            predictions = predict(polyReg, feature_test);
-            accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+            for constraint = 1:100:10
+                for epsilon = 1:100:10
+                    for polyOrder = 1:5:1
+                        polyReg = polynomialRegression(feature_train, label_train, constraint, epsilon, 1, polyOrder);
+                        predictions = predict(polyReg, feature_test);
+                        accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+                    end
+                end
+            end
         case 4
-            polyClass = polynomialClassification(feature_train, label_train, params(n));
-            predictions = predict(polyClass, feature_test);
-            accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
+            for constraint = 1:100:10
+                for polyOrder = 1:5:1
+                    polyClass = polynomialClassification(feature_train, label_train, constraint, polyOrder, 1);
+                    predictions = predict(polyClass, feature_test);
+                    accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
+                end
+            end
         case 5
-            rbfReg = rbfRegMdl(feature_train, label_train, 1, params(n), 1, 1);
-            predictions = predict(rbfReg, feature_test);
-            accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+            for constraint = 1:100:10
+                for epsilon = 1:100:10
+                    for sigma = 1:10:1
+                        rbfReg = rbfRegMdl(feature_train, label_train, constraint, epsilon, 1, sigma);
+                        predictions = predict(rbfReg, feature_test);
+                        accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+                    end
+                end
+            end
         case 6
-            rbfClass = rbfClassMdl(feature_train, label_train, params(n));
-            predictions = predict(rbfClass, feature_test);
-            accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
+            for constraint = 1:100:10
+                for sigma = 1:10:1
+                    rbfClass = rbfClassMdl(feature_train, label_train, constraint, sigma, 1);
+                    predictions = predict(rbfClass, feature_test);
+                    accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
+                end
+            end
         otherwise
             warning('modelSelection param not properly assigned. Pls check.')
     end
     end
 avgAcc = [avgAcc, mean(accuracyArray)];
 accuracyArray = [];
-
-end
-
 best_index = find(avgAcc == max(avgAcc(:)));
 bestParam = params(best_index(1));
 end
