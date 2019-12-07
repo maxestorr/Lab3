@@ -81,7 +81,6 @@ function [bestParam] = innerFoldHyperParameterAdjust(test_features, test_labels,
         otherwise
             warning('modelSelection param not properly assigned. Pls check.')
     end
-    end
 avgAcc = [avgAcc, mean(accuracyArray)];
 accuracyArray = [];
 best_index = find(avgAcc == max(avgAcc(:)));
