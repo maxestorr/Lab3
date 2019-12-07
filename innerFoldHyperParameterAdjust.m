@@ -4,16 +4,6 @@ function [bestParam] = innerFoldHyperParameterAdjust(test_features, test_labels,
     avgAcc = [];
     accuracyArray = [];
     
-    %params hold values that are loaded in
-    switch(modelSelection)
-        case 1 %linear regression
-            params = [1,  5, 10, 100, Inf];
-        case 2 %linear classification
-            params = [1,  5, 10, 100, Inf];
-        otherwise
-            warning('modelSelection param not properly assigned. Pls check.')
-    end
-    
     % k-fold
     for i = 1 : k_sliceNum
         feature_test = new_features(:,:, i);
