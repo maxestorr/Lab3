@@ -42,16 +42,24 @@ function [accuracyArray] = innerFoldHyperParameterAdjust(test_features, test_lab
                     %L2 error used here, gimme ideas bois
                     accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
                 case 2
-                    linearReg = linearClassification(feature_train, label_train, params(n));
-                    predictions = predict(linearReg, feature_test);
+                    linearClass = linearClassification(feature_train, label_train, params(n));
+                    predictions = predict(linearClass, feature_test);
                     accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
                 case 3
-                    linearReg = polynomialRegression(feature_train, label_train, 1, params(n), 2);
-                    predictions = predict(linearReg, feature_test);
+                    polyReg = polynomialRegression(feature_train, label_train, 1, params(n), 2);
+                    predictions = predict(polyReg, feature_test);
                     accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
                 case 4
-                    linearReg = polynomialClassification(feature_train, label_train, params(n));
-                    predictions = predict(linearReg, feature_test);
+                    polyClass = polynomialClassification(feature_train, label_train, params(n));
+                    predictions = predict(polyClass, feature_test);
+                    accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
+                case 5
+                    rbfReg = rbfRegMdl(feature_train, label_train, 1, params(n), 1, 1);
+                    predictions = predict(rbfReg, feature_test);
+                    accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+                case 6
+                    rbfClass = rbfClassMdl(feature_train, label_train, params(n));
+                    predictions = predict(rbfClass, feature_test);
                     accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
                 otherwise
                     warning('modelSelection param not properly assigned. Pls check.')
@@ -60,12 +68,13 @@ function [accuracyArray] = innerFoldHyperParameterAdjust(test_features, test_lab
     end
 end
 
+%This is in case we wanna use gradient descent to automate our parameter
+%selection. we don't need to do it but hey.
 function [output] = Cost(pred, actual, guess)
     output = ((1/2 *(length(pred)))*sum((pred*guess'-actual).^2));
 
 end
 
-function [output] = Der_Cost(pred, actual, guess)
+function [output] = dCost(pred, actual, guess)
     output =(1/(length(pred))*(pred'*(pred*(guess)'-actual)));
-
 end
