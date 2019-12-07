@@ -1,6 +1,6 @@
 clear all
 clc
-modelSelection = 1
+modelSelection = 1;
 
 [classData, labels, regData, targets] = getData();
 disp("Data loaded");
@@ -34,25 +34,20 @@ for i = 1 : k_sliceNum
             end
         end
     end
-    if modelSelection == 1
-        linearReg = linearRegression(feature_train, label_train, 1, epsilonValue, 1);
-        predictions = predict(linearReg, feature_test);
-        alpha = innerFoldHyperParameterAdjust(feature_test, label_test, 1);
+    switch(modelSelection)
+        case 1
+            linearReg = linearRegression(feature_train, label_train, 1, epsilonValue, 1);
+            predictions = predict(linearReg, feature_test);
+            alpha = innerFoldHyperParameterAdjust(feature_test, label_test, 1);
+        case 2
+            linearReg = linearClassification(feature_train, label_train, epsilonValue );
+            predictions = predict(linearReg, feature_test);
+            alpha = innerFoldHyperParameterAdjust(feature_test, label_test, 2);
+        case 3
+            linearReg = linearRegression(feature_train, label_train, 1, epsilonValue, 1);
+            predictions = predict(linearReg, feature_test);
+            alpha = innerFoldHyperParameterAdjust(feature_test, label_test, 1);
     end
-    
-    if modelSelection == 2
-        linearReg = linearClassification(feature_train, label_train, epsilonValue );
-        predictions = predict(linearReg, feature_test);
-        alpha = innerFoldHyperParameterAdjust(feature_test, label_test, 2);
-    end
-    
-    if modelSelection == 3
-        linearReg = linearRegression(feature_train, label_train, 1, epsilonValue, 1);
-        predictions = predict(linearReg, feature_test);
-        alpha = innerFoldHyperParameterAdjust(feature_test, label_test, 1);
-    end
-    
-
 
     %total_fMeasureScore = total_fMeasureScore + fMeasureScore;
     %fscoreArray(i) = fMeasureScore;
