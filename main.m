@@ -14,8 +14,6 @@ accuracyArray = zeros(k_sliceNum, 1);
 fscoreArray = zeros(k_sliceNum, 1);
 total_fMeasureScore = 0;
 
-epsilonValue = 0.1;
-
 for i = 1 : k_sliceNum 
     feature_test = new_features(:,:, i);
     label_test = new_labels(:, i);
@@ -35,23 +33,31 @@ for i = 1 : k_sliceNum
         end
     end
     switch(modelSelection)
-        case 1
-            linearReg = linearRegression(feature_train, label_train, 1, epsilonValue, 1);
+        case 1           
+            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 1);           
+            linearReg = linearRegression(feature_train, label_train, 1, bestParam, 1);
             predictions = predict(linearReg, feature_test);
-            alpha = innerFoldHyperParameterAdjust(feature_test, label_test, 1);
+            accuracy = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
         case 2
-            linearReg = linearClassification(feature_train, label_train, epsilonValue );
-            predictions = predict(linearReg, feature_test);
-            alpha = innerFoldHyperParameterAdjust(feature_test, label_test, 2);
+            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 2);           
+            linearClass = linearClassification(feature_train, label_train, bestParam );
+            predictions = predict(linearClass, feature_test);
+            accuracy = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
         case 3
-            linearReg = linearRegression(feature_train, label_train, 1, epsilonValue, 1);
-            predictions = predict(linearReg, feature_test);
-            alpha = innerFoldHyperParameterAdjust(feature_test, label_test, 1);
+            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 3);           
+            polyReg = polynomialRegression(feature_train, label_train, 1, bestParam, 1);
+            predictions = predict(polyReg, feature_test);
+            accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+        case 4
+            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 2);           
+            rbfReg = rbfRegression(feature_train, label_train, bestParam );
+            predictions = predict(rbfReg, feature_test);
+            accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
+        case 5
+            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 2);           
+            rbfClass = rbfClassMdl(feature_train, label_train, bestParam );
+            predictions = predict(rbfClass, feature_test);
+            accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
+
     end
-
-    %total_fMeasureScore = total_fMeasureScore + fMeasureScore;
-    %fscoreArray(i) = fMeasureScore;
-    %accuracyArray(i) = sum(predictions == label_test) / (size(features, 1) / k_sliceNum);
-    
-
 end
