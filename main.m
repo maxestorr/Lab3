@@ -47,17 +47,16 @@ for i = 1 : k_sliceNum
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 3);           
             polyReg = polynomialRegression(feature_train, label_train, 1, bestParam, 1);
             predictions = predict(polyReg, feature_test);
-            accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+            accuracy = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
         case 4
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 2);           
             rbfReg = rbfRegression(feature_train, label_train, bestParam );
             predictions = predict(rbfReg, feature_test);
-            accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
+            accuracy = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
         case 5
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 2);           
             rbfClass = rbfClassMdl(feature_train, label_train, bestParam );
             predictions = predict(rbfClass, feature_test);
-            accuracyArray = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
-
+            accuracy = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
     end
 end
