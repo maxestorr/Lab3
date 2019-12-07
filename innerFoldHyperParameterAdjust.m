@@ -33,7 +33,7 @@ function [bestParam] = innerFoldHyperParameterAdjust(test_features, test_labels,
                     linearReg = linearRegression(feature_train, label_train, epsilon, constraint, 1);
                     predictions = predict(linearReg, feature_test);
                     %L2 error used here, gimme ideas bois
-                    accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+                    accuracyArray = [accuracyArray, (1 / 2 * length(label_test)) * sumsqr(predictions - label_test)];
                 end
             end
         case 2
@@ -48,7 +48,7 @@ function [bestParam] = innerFoldHyperParameterAdjust(test_features, test_labels,
                     for polyOrder = 1:5:1
                         polyReg = polynomialRegression(feature_train, label_train, constraint, epsilon, 1, polyOrder);
                         predictions = predict(polyReg, feature_test);
-                        accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+                        accuracyArray = [accuracyArray, (1 / 2 * length(label_test)) * sumsqr(predictions - label_test)];
                     end
                 end
             end
@@ -66,7 +66,7 @@ function [bestParam] = innerFoldHyperParameterAdjust(test_features, test_labels,
                     for sigma = 1:10:1
                         rbfReg = rbfRegMdl(feature_train, label_train, constraint, epsilon, 1, sigma);
                         predictions = predict(rbfReg, feature_test);
-                        accuracyArray = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+                        accuracyArray = [accuracyArray, (1 / 2 * length(label_test)) * sumsqr(predictions - label_test)];
                     end
                 end
             end
