@@ -1,7 +1,7 @@
 function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels, modelSelection)
     k_sliceNum = 10;
     [new_features, new_labels] = kFold(k_sliceNum, test_features, test_labels);
-    paramEval = []
+    paramEval = [];
     
     % k-fold (NEEDS REIMPLEMENTING SINCE I FUCKED IT)
     for i = 1 : k_sliceNum
@@ -29,7 +29,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
         case 1
             for constraint = 10:10:100
                 for epsilon = 1:1:10
-                    linearReg = linearRegression(feature_train, label_train, epsilon, constraint, 1);
+                    linearReg = linearRegression(feature_train, label_train, epsilon, 1, constraint);
                     predictions = predict(linearReg, feature_test);
                     %L2 error used here, gimme ideas bois
                     acc = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
@@ -57,7 +57,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
         case 4
             for constraint = 10:10:100
                 for polyOrder = 1:1:5
-                    polyClass = polynomialClassification(feature_train, label_train, constraint, polyOrder, 1);
+                    polyClass = polynomialClassification(feature_train, label_train, constraint, 1, polyOrder);
                     predictions = predict(polyClass, feature_test);
                     acc = sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum);
                     paramEval = [paramEval; constraint, polyOrder, acc];
