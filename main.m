@@ -34,10 +34,12 @@ for i = 1 : k_sliceNum
     end
     switch(modelSelection)
         case 1           
-            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 1);           
-            linearReg = linearRegression(feature_train, label_train, 1, bestParam, 1);
+            bestParamArray = innerFoldHyperParameterAdjust(feature_train, label_train, 1);    
+            boxConstraint = bestParamArray(1,1);
+            epsilon = bestParamArray(1,2);
+            linearReg = linearRegression(feature_train, label_train, boxConstraint, epsilon, 1);
             predictions = predict(linearReg, feature_test);
-            accuracy = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+            accuracyArray(i) = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
         case 2
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 2);           
             linearClass = linearClassification(feature_train, label_train, bestParam );
