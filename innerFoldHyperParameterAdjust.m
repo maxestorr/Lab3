@@ -3,7 +3,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
     [new_features, new_labels] = kFold(k_sliceNum, test_features, test_labels);
     paramEval = [];
     
-    % k-fold (NEEDS REIMPLEMENTING SINCE I FUCKED IT)
+    % k-fold
     for i = 1 : k_sliceNum
         feature_test = new_features(:,:, i);
         label_test = new_labels(:, i);
@@ -27,7 +27,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
     %depending on model selection, paramter is loaded in
     switch(modelSelection)
         case 1
-            for constraint = 10:10:100
+            for constraint = 1:10:100
                 for epsilon = 1:1:10
                     linearReg = linearRegression(feature_train, label_train, epsilon, 1, constraint);
                     predictions = predict(linearReg, feature_test);
@@ -37,14 +37,14 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
                 end
             end
         case 2
-            for constraint = 10:10:100                
+            for constraint = 1:10:100                
                 linearClass = linearClassification(feature_train, label_train, constraint, 1);
                 predictions = predict(linearClass, feature_test);
                 acc = sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum);
                 paramEval = [paramEval; constraint, acc];
             end
         case 3
-            for constraint = 10:10:100
+            for constraint = 1:10:100
                 for epsilon = 1:1:10
                     for polyOrder = 1:1:5
                         polyReg = polynomialRegression(feature_train, label_train, constraint, 1, epsilon, polyOrder);
@@ -56,7 +56,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
             end
             
         case 4
-            for constraint = 10:10:100
+            for constraint = 1:10:100
                 for polyOrder = 1:1:5
                     polyClass = polynomialClassification(feature_train, label_train, constraint, 1, polyOrder);
                     predictions = predict(polyClass, feature_test);
@@ -65,7 +65,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
                 end
             end
         case 5
-            for constraint = 10:10:100
+            for constraint = 1:10:100
                 for epsilon = 1:1:10
                     for sigma = 1:1:10
                         rbfReg = rbfRegression(feature_train, label_train, constraint, epsilon, 1, sigma);
@@ -76,7 +76,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
                 end
             end
         case 6
-            for constraint = 10:10:100
+            for constraint = 1:10:100
                 for sigma = 1:1:10
                     rbfClass = rbfClassMdl(feature_train, label_train, constraint, sigma, 1);
                     predictions = predict(rbfClass, feature_test);

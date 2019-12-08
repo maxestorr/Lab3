@@ -1,6 +1,6 @@
 clear all
 clc
-modelSelection = 5;
+modelSelection = 1;
 
 [classData, labels, regData, targets] = getData();
 disp("Data loaded");
