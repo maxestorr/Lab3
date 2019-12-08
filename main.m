@@ -1,6 +1,6 @@
 clear all
 clc
-modelSelection = 6;
+modelSelection = 1;
 labelColumn = 1;
 
 [classData, labels, regData, targets] = getData();
@@ -44,7 +44,7 @@ for i = 1 : k_sliceNum
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection, labelColumn);    
             boxConstraint = bestParam(1,1);
             epsilon = bestParam(1,2);
-            model = linearRegression(feature_train, label_train, labelColumn, boxConstraint, epsilon);
+            model = linearRegression(feature_train, label_train, boxConstraint, labelColumn, epsilon);
             predictions = predict(model, feature_test);
             
             difference = predictions - label_test;
