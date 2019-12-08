@@ -1,6 +1,6 @@
 clear all
 clc
-modelSelection = 1;
+modelSelection = 5;
 
 [classData, labels, regData, targets] = getData();
 disp("Data loaded");
@@ -47,7 +47,7 @@ for i = 1 : k_sliceNum
 
             accuracyArray(i) = rmsError;
         case 2
-            labelColumn = 1
+            labelColumn = 1;
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection);     
             boxConstraint = bestParam(1,1);
             model = linearClassification(feature_train, label_train, boxConstraint, labelColumn);
@@ -59,7 +59,7 @@ for i = 1 : k_sliceNum
             boxConstraint = bestParam(1,1);
             epsilon = bestParam(1,2);
             polyOrder = bestParam(1,3);           
-            model = polynomialRegression(feature_train, label_train, boxConstraint, epsilon, 1, polyOrder);
+            model = polynomialRegression(feature_train, label_train, boxConstraint, 1, epsilon, polyOrder);
             predictions = predict(model, feature_test);
             difference = predictions - label_test;
             squaredError = difference .^ 2;
@@ -79,7 +79,7 @@ for i = 1 : k_sliceNum
             boxConstraint = bestParam(1,1);
             epsilon = bestParam(1,2);
             sigma = bestParam(1,3);               
-            model = rbfRegression(feature_train, label_train, boxConstraint, epsilon, 1, sigma);
+            model = rbfRegression(feature_train, label_train, boxConstraint, 1, epsilon, sigma);
             predictions = predict(model, feature_test);
             difference = predictions - label_test;
             squaredError = difference .^ 2;
