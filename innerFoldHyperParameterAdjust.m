@@ -31,7 +31,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
                 for epsilon = 1:1:10
                     linearReg = linearRegression(feature_train, label_train, epsilon, 1, constraint);
                     predictions = predict(linearReg, feature_test);
-                    %L2 error used here, gimme ideas bois
+                    %L2 error used here for cost
                     acc = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
                     paramEval = [paramEval; constraint, epsilon, acc];
                 end
@@ -54,6 +54,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
                     end
                 end
             end
+            
         case 4
             for constraint = 10:10:100
                 for polyOrder = 1:1:5
