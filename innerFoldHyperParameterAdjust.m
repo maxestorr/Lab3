@@ -88,8 +88,17 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
     end
 
 % Find row of parameters for best accuracy
-[bestRows, ~] = find(paramEval(:, end) == max(paramEval(:, end)));
-bestParams = paramEval(bestRows(1), 1:end-1);  % Exclude accuracy value
+
+%regression, take the one with the lowest cost
+%classification, take the largest accuracy 
+if mod(modelSeletion,2) == 1
+    [bestRows, ~] = find(paramEval(:, end) == min(paramEval(:, end)));
+    bestParams = paramEval(bestRows(1), 1:end-1);  % Exclude accuracy value
+else
+    [bestRows, ~] = find(paramEval(:, end) == max(paramEval(:, end)));
+    bestParams = paramEval(bestRows(1), 1:end-1);  % Exclude accuracy value
+end
+
 end
 
 
