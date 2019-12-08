@@ -1,4 +1,4 @@
-function linClassMdl = linearClassification(data,labels,boxConstraint)
-    linClassMdl = fitcsvm(data,labels,'KernelFunction','linear',...
+function linClassMdl = linearClassification(data,labels,boxConstraint, labelColumn)
+    linClassMdl = fitcsvm(data,labels(:, labelColumn),'KernelFunction','linear',...
         'BoxConstraint',boxConstraint);
 end
