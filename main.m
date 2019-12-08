@@ -1,6 +1,6 @@
 clear all
 clc
-modelSelection = 1;
+modelSelection = 2;
 
 [classData, labels, regData, targets] = getData();
 disp("Data loaded");
@@ -47,9 +47,10 @@ for i = 1 : k_sliceNum
 
             accuracyArray(i) = rmsError;
         case 2
+            labelColumn = 1
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 2);     
             boxConstraint = bestParam(1,1);
-            model = linearClassification(feature_train, label_train, boxConstraint);
+            model = linearClassification(feature_train, label_train, boxConstraint, labelColumn);
             predictions = predict(model, feature_test);
             accuracyArray(i) = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
         
