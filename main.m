@@ -1,6 +1,6 @@
 clear all
 clc
-modelSelection = 2;
+modelSelection = 5;
 
 [classData, labels, regData, targets] = getData();
 disp("Data loaded");
@@ -34,7 +34,7 @@ for i = 1 : k_sliceNum
     end
     switch(modelSelection)
         case 1           
-            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 1);    
+            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection);    
             boxConstraint = bestParam(1,1);
             epsilon = bestParam(1,2);
             model = linearRegression(feature_train, label_train, boxConstraint, 1, epsilon);
@@ -48,14 +48,14 @@ for i = 1 : k_sliceNum
             accuracyArray(i) = rmsError;
         case 2
             labelColumn = 1
-            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 2);     
+            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection);     
             boxConstraint = bestParam(1,1);
             model = linearClassification(feature_train, label_train, boxConstraint, labelColumn);
             predictions = predict(model, feature_test);
             accuracyArray(i) = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
         
         case 3
-            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 3);
+            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection);
             boxConstraint = bestParam(1,1);
             epsilon = bestParam(1,2);
             polyOrder = bestParam(1,3);           
@@ -67,7 +67,7 @@ for i = 1 : k_sliceNum
             rmsError = sqrt(meanSquaredError);
             accuracyArray(i) = rmsError;
         case 4
-            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 2);   
+            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection);   
             boxConstraint = bestParam(1,1);
             polyOrder = bestParam(1,2);           
             model = polynomialClassification(feature_train, label_train, boxConstraint, 1, polyOrder);
@@ -75,11 +75,11 @@ for i = 1 : k_sliceNum
             accuracy = [accuracyArray, sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum)];
         
         case 5
-            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 2); 
+            bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection); 
             boxConstraint = bestParam(1,1);
             epsilon = bestParam(1,2);
             sigma = bestParam(1,3);               
-            model = rbfRegMdl(feature_train, label_train, boxConstraint, epsilon, 1, sigma);
+            model = rbfRegression(feature_train, label_train, boxConstraint, epsilon, 1, sigma);
             predictions = predict(model, feature_test);
             difference = predictions - label_test;
             squaredError = difference .^ 2;
