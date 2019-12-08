@@ -78,7 +78,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
         case 6
             for constraint = 1:10:100
                 for sigma = 1:1:10
-                    rbfClass = rbfClassMdl(feature_train, label_train, constraint, sigma, 1);
+                    rbfClass = rbfClassification(feature_train, label_train, constraint, 1, sigma);
                     predictions = predict(rbfClass, feature_test);
                     acc = sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum);
                     paramEval = [paramEval; constraint, sigma, acc];
