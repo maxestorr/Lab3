@@ -39,7 +39,13 @@ for i = 1 : k_sliceNum
             epsilon = bestParam(1,2);
             model = linearRegression(feature_train, label_train, boxConstraint, 1, epsilon);
             predictions = predict(model, feature_test);
-            accuracyArray(i) = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+            
+            difference = predictions - label_test;
+            squaredError = difference .^ 2;
+            meanSquaredError = sum(squaredError(:)) / numel(label_test);
+            rmsError = sqrt(meanSquaredError);
+
+            accuracyArray(i) = rmsError;
         case 2
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 2);     
             boxConstraint = bestParam(1,1);
@@ -54,7 +60,11 @@ for i = 1 : k_sliceNum
             polyOrder = bestParam(1,3);           
             model = polynomialRegression(feature_train, label_train, boxConstraint, epsilon, 1, polyOrder);
             predictions = predict(model, feature_test);
-            accuracyArray(i) = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+            difference = predictions - label_test;
+            squaredError = difference .^ 2;
+            meanSquaredError = sum(squaredError(:)) / numel(label_test);
+            rmsError = sqrt(meanSquaredError);
+            accuracyArray(i) = rmsError;
         case 4
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 2);   
             boxConstraint = bestParam(1,1);
@@ -70,7 +80,11 @@ for i = 1 : k_sliceNum
             sigma = bestParam(1,3);               
             model = rbfRegMdl(feature_train, label_train, boxConstraint, epsilon, 1, sigma);
             predictions = predict(model, feature_test);
-            accuracyArray(i) = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
+            difference = predictions - label_test;
+            squaredError = difference .^ 2;
+            meanSquaredError = sum(squaredError(:)) / numel(label_test);
+            rmsError = sqrt(meanSquaredError);
+            accuracyArray(i) = rmsError;
         case 6
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, 2); 
             boxConstraint = bestParam(1,1);
@@ -81,7 +95,7 @@ for i = 1 : k_sliceNum
     end
 end
 
-print(bestParams)
-print(mean(accuracyArray))
-print(len(model.SupportVectors));
-print(len(model.BoxConstraints / len(model.SupportVectors)));
+disp(bestParam)
+disp(mean(accuracyArray))
+disp(length(model.SupportVectors));
+disp(length(model.SupportVectors) / length(model.BoxConstraints));
