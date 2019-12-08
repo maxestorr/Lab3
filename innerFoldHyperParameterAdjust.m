@@ -1,4 +1,4 @@
-function [bestParam] = innerFoldHyperParameterAdjust(test_features, test_labels, modelSelection)
+function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels, modelSelection)
     k_sliceNum = 10;
     [new_features, new_labels] = kFold(k_sliceNum, test_features, test_labels);
     paramEval = []
