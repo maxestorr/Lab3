@@ -27,8 +27,8 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
     %depending on model selection, paramter is loaded in
     switch(modelSelection)
         case 1
-            for constraint = 1:10:100
-                for epsilon = 1:1:10
+            for constraint = 0.1:0.1:1
+                for epsilon = 0.1:0.1:1
                     linearReg = linearRegression(feature_train, label_train, epsilon, labelColumn, constraint);
                     predictions = predict(linearReg, feature_test);
                     %L2 error used here for cost
@@ -37,15 +37,15 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
                 end
             end
         case 2
-            for constraint = 1:10:100                
+            for constraint = 0.1:0.1:1               
                 linearClass = linearClassification(feature_train, label_train, constraint, labelColumn);
                 predictions = predict(linearClass, feature_test);
                 acc = sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum);
                 paramEval = [paramEval; constraint, acc];
             end
         case 3
-            for constraint = 1:10:100
-                for epsilon = 1:1:10
+            for constraint = 0.1:0.1:1
+                for epsilon = 0.1:0.1:1
                     for polyOrder = 1:1:5
                         polyReg = polynomialRegression(feature_train, label_train, constraint, labelColumn, epsilon, polyOrder);
                         predictions = predict(polyReg, feature_test);
@@ -56,7 +56,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
             end
             
         case 4
-            for constraint = 1:10:100
+            for constraint = 0.1:0.1:1
                 for polyOrder = 1:1:5
                     polyClass = polynomialClassification(feature_train, label_train, constraint, labelColumn, polyOrder);
                     predictions = predict(polyClass, feature_test);
@@ -65,9 +65,9 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
                 end
             end
         case 5
-            for constraint = 1:10:100
-                for epsilon = 1:1:10
-                    for sigma = 1:1:10
+            for constraint = 0.1:0.1:1
+                for epsilon = 0.1:0.1:1
+                    for sigma = 0.1:0.1:1
                         rbfReg = rbfRegression(feature_train, label_train, constraint, epsilon, labelColumn, sigma);
                         predictions = predict(rbfReg, feature_test);
                         acc = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
@@ -76,8 +76,8 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
                 end
             end
         case 6
-            for constraint = 1:10:100
-                for sigma = 1:1:10
+            for constraint = 0.1:0.1:1
+                for sigma = 0.1:0.1:1
                     rbfClass = rbfClassification(feature_train, label_train, constraint, labelColumn, sigma);
                     predictions = predict(rbfClass, feature_test);
                     acc = sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum);
@@ -89,7 +89,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
     end
 
 % Find row of parameters for best accuracy
-[bestRows, ~] = find(paramEval(:, end) == max(paramEval(:, end)));
+[bestRows, ~] = find(paramEval(:, end) == min(paramEval(:, end)));
 bestParams = paramEval(bestRows(1), 1:end-1);  % Exclude accuracy value
 
 end
