@@ -1,5 +1,4 @@
-function regMdl = linearRegression(data, targets, boxConstraint, labelColumn, epsilonValue)
-disp('Linear reg');
-regMdl = fitrsvm(data, targets(:, labelColumn), 'KernelFunction', 'linear', 'BoxConstraint', boxConstraint, ...
+function regMdl = linearRegression(data, targets, boxConstraint, epsilonValue)
+regMdl = fitrsvm(data, targets, 'KernelFunction', 'linear', 'BoxConstraint', boxConstraint, ...
                  'Epsilon', epsilonValue);
 end
