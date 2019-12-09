@@ -6,16 +6,18 @@ labelColumn = 1;
 [classData, labels, regData, targets] = getData();
 disp("Data loaded");
 
-regData = regData(1:1000, :);
-
 if mod(modelSelection, 2) == 1
+    % Regression
     targets = targets(1:1000, :);
+    features = regData(1:1000, :);
 else 
+    % Classification
     targets = labels(1:1000, :);
+    features = classData(1:1000, :);
 end
 
 k_sliceNum = 10;
-[new_features, new_labels] = kFold(k_sliceNum, regData, targets);
+[new_features, new_labels] = kFold(k_sliceNum, features, targets);
 
 accuracyArray = zeros(k_sliceNum, 1);
 fscoreArray = zeros(k_sliceNum, 1);
