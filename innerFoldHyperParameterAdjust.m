@@ -1,4 +1,4 @@
-function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels, modelSelection)
+function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels, modelSelection, labelColumn)
     k_sliceNum = 10;
     [new_features, new_labels] = kFold(k_sliceNum, test_features, test_labels);
     paramEval = [];
@@ -29,7 +29,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
         case 1
             for constraint = 0.1:0.1:1
                 for epsilon = 0.1:0.1:1
-                    linearReg = linearRegression(feature_train, label_train, epsilon, 1, constraint);
+                    linearReg = linearRegression(feature_train, label_train, epsilon, labelColumn, constraint);
                     predictions = predict(linearReg, feature_test);
                     %L2 error used here for cost
                     acc = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
@@ -38,7 +38,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
             end
         case 2
             for constraint = 0.1:0.1:1               
-                linearClass = linearClassification(feature_train, label_train, constraint, 1);
+                linearClass = linearClassification(feature_train, label_train, constraint, labelColumn);
                 predictions = predict(linearClass, feature_test);
                 acc = sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum);
                 paramEval = [paramEval; constraint, acc];
@@ -47,7 +47,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
             for constraint = 0.1:0.1:1
                 for epsilon = 0.1:0.1:1
                     for polyOrder = 1:1:5
-                        polyReg = polynomialRegression(feature_train, label_train, constraint, 1, epsilon, polyOrder);
+                        polyReg = polynomialRegression(feature_train, label_train, constraint, labelColumn, epsilon, polyOrder);
                         predictions = predict(polyReg, feature_test);
                         acc = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
                         paramEval = [paramEval; constraint, epsilon, polyOrder, acc];
@@ -58,7 +58,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
         case 4
             for constraint = 0.1:0.1:1
                 for polyOrder = 1:1:5
-                    polyClass = polynomialClassification(feature_train, label_train, constraint, 1, polyOrder);
+                    polyClass = polynomialClassification(feature_train, label_train, constraint, labelColumn, polyOrder);
                     predictions = predict(polyClass, feature_test);
                     acc = sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum);
                     paramEval = [paramEval; constraint, polyOrder, acc];
@@ -68,7 +68,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
             for constraint = 0.1:0.1:1
                 for epsilon = 0.1:0.1:1
                     for sigma = 0.1:0.1:1
-                        rbfReg = rbfRegression(feature_train, label_train, constraint, epsilon, 1, sigma);
+                        rbfReg = rbfRegression(feature_train, label_train, constraint, epsilon, labelColumn, sigma);
                         predictions = predict(rbfReg, feature_test);
                         acc = (1 / 2 * length(label_test)) * sumsqr(predictions - label_test);
                         paramEval = [paramEval; constraint, epsilon, sigma, acc];
@@ -78,7 +78,7 @@ function [bestParams] = innerFoldHyperParameterAdjust(test_features, test_labels
         case 6
             for constraint = 0.1:0.1:1
                 for sigma = 0.1:0.1:1
-                    rbfClass = rbfClassification(feature_train, label_train, constraint, 1, sigma);
+                    rbfClass = rbfClassification(feature_train, label_train, constraint, labelColumn, sigma);
                     predictions = predict(rbfClass, feature_test);
                     acc = sum(predictions == label_test) / (size(test_features, 1) / k_sliceNum);
                     paramEval = [paramEval; constraint, sigma, acc];
