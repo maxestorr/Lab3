@@ -1,6 +1,6 @@
 clear all
 clc
-modelSelection = 1;
+modelSelection = 6;
 labelColumn = 1;
 
 [classData, labels, regData, targets] = getData();
@@ -12,7 +12,7 @@ if mod(modelSelection, 2) == 1
     features = regData(1:1000, :);
 else 
     % Classification
-    targets = labels(1:1000, :);
+    targets = labels(1:1000, labelColumn);
     features = classData(1:1000, :);
 end
 
