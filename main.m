@@ -1,6 +1,6 @@
 clear all
 clc
-modelSelection = 1;
+modelSelection = 6;
 labelColumn = 1;
 
 [classData, labels, regData, targets] = getData();
@@ -12,7 +12,7 @@ if mod(modelSelection, 2) == 1
     features = regData(1:1000, :);
 else 
     % Classification
-    targets = labels(1:1000, :);
+    targets = labels(1:1000, labelColumn);
     features = classData(1:1000, :);
 end
 
@@ -41,6 +41,12 @@ for i = 1 : k_sliceNum
             end
         end
     end
+    
+    model = rbfClassification(feature_train, label_train, 0.1, labelColumn, 220);
+    predictions = predict(model, feature_test);
+    
+    return   
+    
     switch(modelSelection)
         case 1           
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection, labelColumn);    
