@@ -1,11 +1,12 @@
 clear all
 clc
-modelSelection = 6;
+modelSelection = 1; % Select which SVM model to train with
 labelColumn = 1;
 
 [classData, labels, regData, targets] = getData();
 disp("Data loaded");
 
+% Check if regression or classification
 if mod(modelSelection, 2) == 1
     % Regression
     targets = targets(1:1000, :);
@@ -23,7 +24,7 @@ accuracyArray = zeros(k_sliceNum, 1);
 fscoreArray = zeros(k_sliceNum, 1);
 total_fMeasureScore = 0;
 
-for i = 1 : k_sliceNum 
+for i = 1 : k_sliceNum
     feature_test = new_features(:,:, i);
     label_test = new_labels(:, i);
     clearvars feature_train label_train
@@ -48,7 +49,7 @@ for i = 1 : k_sliceNum
     return   
     
     switch(modelSelection)
-        case 1           
+        case 1 % Linear Regression           
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection, labelColumn);    
             boxConstraint = bestParam(1,1);
             epsilon = bestParam(1,2);
@@ -61,14 +62,14 @@ for i = 1 : k_sliceNum
             rmsError = sqrt(meanSquaredError);
 
             accuracyArray(i) = rmsError;
-        case 2
+        case 2 % Linear Classification
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection, labelColumn);     
             boxConstraint = bestParam(1,1);
             model = linearClassification(feature_train, label_train, boxConstraint, labelColumn);
             predictions = predict(model, feature_test);
             accuracyArray(i) = sum(predictions == label_test) / (size(targets, 1) / k_sliceNum);
         
-        case 3
+        case 3 % Polynomial Regression
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection, labelColumn);
             boxConstraint = bestParam(1,1);
             epsilon = bestParam(1,2);
@@ -80,7 +81,7 @@ for i = 1 : k_sliceNum
             meanSquaredError = sum(squaredError(:)) / numel(label_test);
             rmsError = sqrt(meanSquaredError);
             accuracyArray(i) = rmsError;
-        case 4
+        case 4 % Polynomial Classification
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection, labelColumn);   
             boxConstraint = bestParam(1,1);
             polyOrder = bestParam(1,2);           
@@ -88,7 +89,7 @@ for i = 1 : k_sliceNum
             predictions = predict(model, feature_test);
             accuracy = sum(predictions == label_test) / (size(targets, 1) / k_sliceNum);
         
-        case 5
+        case 5 % Gaussian Regression
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection, labelColumn); 
             boxConstraint = bestParam(1,1);
             epsilon = bestParam(1,2);
@@ -100,7 +101,7 @@ for i = 1 : k_sliceNum
             meanSquaredError = sum(squaredError(:)) / numel(label_test);
             rmsError = sqrt(meanSquaredError);
             accuracyArray(i) = rmsError;
-        case 6
+        case 6 % Gaussian Classification
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection, labelColumn); 
             boxConstraint = bestParam(1,1);
             sigma = bestParam(1,2);                      
