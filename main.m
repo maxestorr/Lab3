@@ -41,6 +41,12 @@ for i = 1 : k_sliceNum
             end
         end
     end
+    
+    model = rbfClassification(feature_train, label_train, 0.1, labelColumn, 220);
+    predictions = predict(model, feature_test);
+    
+    return   
+    
     switch(modelSelection)
         case 1           
             bestParam = innerFoldHyperParameterAdjust(feature_train, label_train, modelSelection, labelColumn);    
